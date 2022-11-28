@@ -71,7 +71,7 @@ class VendingMachine:
         """
         sorted_coins = sorted(self.coins.items(), key=lambda item: item[1].get("value"), reverse=True)
         coins = {key: value for key, value in sorted_coins}
-        user_change = dict()
+        user_change = {}
 
         for code, coin in coins.items():
             coin_value = coin.get("value")
@@ -144,9 +144,52 @@ vending_machine = VendingMachine(
     coins={
         "1c": {"quantity": 200, "value": 0.01},
         "5c": {"quantity": 100, "value": 0.05},
-        "10c": {"quantity": 40, "value": 0.10},
-        "25c": {"quantity": 20, "value": 0.25},
-        "50c": {"quantity": 10, "value": 0.5},
+        "10c": {"quantity": 70, "value": 0.10},
+        "25c": {"quantity": 50, "value": 0.25},
+        "50c": {"quantity": 30, "value": 0.5},
     }
 )
 
+
+@api_view(["GET"])
+def list_products(request):
+    return Response(vending_machine.products)
+
+
+@api_view(["POST"])
+def buy_product(request):
+    data = request.data
+    product_slot = data.get("product_slot")
+    coins = data.get("coins")
+
+    response = vending_machine.vend(product_slot, coins)
+    return Response(response)
+
+
+@api_view(["POST"])
+def update_product_quantity(request):
+    data = request.data
+    product_slot = data.get("product_slot")
+    quantity = data.get("quantity")
+    return Response(vending_machine.update_product_quantity(product_slot, quantity, True))
+
+
+@api_view(["POST"])
+def update_product_price(request):
+    data = request.data
+    product_slot = data.get("product_slot")
+    price = data.get("price")
+    return Response(vending_machine.update_product_price(product_slot, price))
+
+
+@api_view(["GET"])
+def list_coins(request):
+    return Response(vending_machine.coins)
+
+
+@api_view(["POST"])
+def update_coin_quantity(request):
+    data = request.data
+    code = data.get("code")
+    quantity = data.get("quantity")
+    return Response(vending_machine.update_coin_quantity(code, quantity, True))
