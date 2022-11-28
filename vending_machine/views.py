@@ -131,3 +131,22 @@ class VendingMachine:
         return product
 
 
+# Initialize vending machine with products and coins
+vending_machine = VendingMachine(
+    products={
+        "slot1": {"name": "candy", "quantity": 10, "price": 3},
+        "slot2": {"name": "cookies", "quantity": 10, "price": 4},
+        "slot3": {"name": "fresh fruit", "quantity": 10, "price": 2},
+        "slot4": {"name": "milk", "quantity": 10, "price": 5},
+        "slot5": {"name": "water", "quantity": 10, "price": 1},
+        "slot6": {"name": "soda", "quantity": 30, "price": 5},
+    },
+    coins={
+        "1c": {"quantity": 200, "value": 0.01},
+        "5c": {"quantity": 100, "value": 0.05},
+        "10c": {"quantity": 40, "value": 0.10},
+        "25c": {"quantity": 20, "value": 0.25},
+        "50c": {"quantity": 10, "value": 0.5},
+    }
+)
+
