@@ -35,12 +35,16 @@ class VendingMachine:
             inserted_coin_quantity = inserted_coin.get("quantity")
             user_coin = coins.get(inserted_coin_code)
             if not user_coin:
-                raise ValidationError(detail=f"The coin '{inserted_coin_code}' is not accepted")
-            total_value = user_coin.get('value') * inserted_coin_quantity
+                raise ValidationError(
+                    detail=f"The coin '{inserted_coin_code}' is not accepted"
+                )
+            total_value = user_coin.get("value") * inserted_coin_quantity
             user_amount += total_value
 
         if user_amount < selected_product_price:
-            raise ValidationError(detail="Not enough money to purchase selected product")
+            raise ValidationError(
+                detail="Not enough money to purchase selected product"
+            )
 
         # calculate the change
         change_total = user_amount - selected_product_price
@@ -60,7 +64,7 @@ class VendingMachine:
             "Message": "Product purchased successfully",
             "Product": selected_product.get("name"),
             "change_value": round(change_total, 2),
-            "change_coins": user_change
+            "change_coins": user_change,
         }
 
     def calculate_change(self, change_total):
@@ -69,7 +73,9 @@ class VendingMachine:
         :param change_total: the total amount of changes value
         :return: Dict of each type of coin and it's quantity
         """
-        sorted_coins = sorted(self.coins.items(), key=lambda item: item[1].get("value"), reverse=True)
+        sorted_coins = sorted(
+            self.coins.items(), key=lambda item: item[1].get("value"), reverse=True
+        )
         coins = {key: value for key, value in sorted_coins}
         user_change = {}
 
@@ -81,8 +87,12 @@ class VendingMachine:
                     user_change[code] = round(change_total // coin_value)
                     coin_change_quantity = user_change.get(code)
                     if coin_change_quantity > coin_quantity:
-                        raise ValidationError(detail="Not enough coins to give change. Transaction canceled")
-                    change_total = round(change_total - (coin_change_quantity * coin_value), 2)
+                        raise ValidationError(
+                            detail="Not enough coins to give change. Transaction canceled"
+                        )
+                    change_total = round(
+                        change_total - (coin_change_quantity * coin_value), 2
+                    )
 
         return user_change
 
@@ -96,7 +106,9 @@ class VendingMachine:
         """
         coin = self.coins.get(code)
         if not coin:
-            raise ValidationError(detail=f"'{code}' coin not found", code=status.HTTP_404_NOT_FOUND)
+            raise ValidationError(
+                detail=f"'{code}' coin not found", code=status.HTTP_404_NOT_FOUND
+            )
         current_quantity = coin.get("quantity")
         coin["quantity"] = quantity if restock else current_quantity - quantity
         self.coins[code] = coin
@@ -112,7 +124,10 @@ class VendingMachine:
         """
         product = self.products.get(slot)
         if not product:
-            raise ValidationError(detail=f"Product slot '{slot}' not found", code=status.HTTP_404_NOT_FOUND)
+            raise ValidationError(
+                detail=f"Product slot '{slot}' not found",
+                code=status.HTTP_404_NOT_FOUND,
+            )
         current_quantity = product.get("quantity")
         product["quantity"] = quantity if restock else current_quantity - quantity
         self.products[slot] = product
@@ -147,7 +162,7 @@ vending_machine = VendingMachine(
         "10c": {"quantity": 70, "value": 0.10},
         "25c": {"quantity": 50, "value": 0.25},
         "50c": {"quantity": 30, "value": 0.5},
-    }
+    },
 )
 
 
@@ -171,7 +186,9 @@ def update_product_quantity(request):
     data = request.data
     product_slot = data.get("product_slot")
     quantity = data.get("quantity")
-    return Response(vending_machine.update_product_quantity(product_slot, quantity, True))
+    return Response(
+        vending_machine.update_product_quantity(product_slot, quantity, True)
+    )
 
 
 @api_view(["POST"])
